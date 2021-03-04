@@ -4,5 +4,12 @@ setup(
     name = 'chosunpop',
     version = '0.0.1',
     url = "https://github.com/almostseoul/snowyseoul.git",
-    packages = ['chosunpop']
+    author = 'acheul',
+    author_email = 'acheul',
+    license = "acheul",
+    packages = ['chosunpop'],
+    zip_sage = False,
+    install_requires = [
+        'numpy==1.19.5'
+    ]
     )
