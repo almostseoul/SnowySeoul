@@ -9,7 +9,7 @@ setup(
     author_email = 'acheul',
     license = "acheul",
     packages = ['chosunpop'],
-    zip_sae = False,
+    zip_safe = False,
     install_requires = [
         'numpy==1.19.5'
     ]
