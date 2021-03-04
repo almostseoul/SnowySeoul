@@ -58,7 +58,7 @@ def Chi2Fig(cha, complex=False, new_dict = False, replace_dict=dict()):
     dict_deci = dict((k, v) for k, v in dict_here.items() if v%10 == 0 and v != 0) # '空'은 제외.
 
     if len(cha) == 1:
-        result = dict_here[str]
+        result = dict_here[cha]
     else:
         # (1) '空' 처리.
         cha = cha.replace('空', '')
