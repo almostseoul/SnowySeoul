@@ -1,16 +1,15 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = 'chosunpop',
+    name = 'chosun_pop',
     version = '0.0.1',
     description = 'chosun Poppop Pop',
     url = "https://github.com/almostseoul/snowyseoul.git",
     author = 'acheul',
     author_email = 'acheul',
     license = "acheul",
-    packages = ['chosunpop'],
+    packages = ['chosun_pop'],
     zip_safe = False,
     install_requires = [
-        'numpy==1.19.5'
     ]
 )
