@@ -83,14 +83,16 @@ def slice_by_idx(cha, idx_list, side='front'):
     return cha_list
             
 
-
-def slice_by_str(cha_list, by_list, stop_list = [], strip = True, exhaustive=True, exhaustive_limit=1):
+    
+def slice_by_str(cha_list, by_list, side = 'front', strip = True, exhaustive=True, exhaustive_limit=1):
     """
     Slice a list of strings by strings in a list. If they put in str, function will transfrom them into list automatically. Result form is in list, of course.
     If strip == True, all strings in a result list are applied .strip() function. If not, they are not. True is default here.
     If exhaustive == True, each string in by_list will slice strings in cha_list as much as they can.
     (however, strings in by_list have hierarchy. That is, if a character or character span sliced by former elements in by_list, it won't be sliced by lasts.)
     If exhaustive == False, slicing time for each string in by_list are limitated as musch as exhaustive_limit value, which has 1 default.
+
+    side option can have 'front', 'end' or 'both'. This designates the slicing point, if at the front/end/both of the character.
     """
 
     if type(cha_list) == str:
@@ -120,9 +122,18 @@ def slice_by_str(cha_list, by_list, stop_list = [], strip = True, exhaustive=Tru
                             exh += 1
                             if exh > exhaustive_limit:
                                 break
-                    
-        cha_listed = slice_by_idx(cha, i_tuples, side='tuple') # use the slice_by_idx function defined before.
-        cha_list_2.extend(cha_listed)
+
+        i_fronts = [it[0] for it in i_tuples]
+        i_ends = [it[0]+it[1]-1 for it in i_tuples]
+        if side == 'front':
+            cha_listed = slice_by_idx(cha, i_fronts, side='front') # use the slice_by_idx function defined before.
+            cha_list_2.extend(cha_listed)
+        elif side == 'end':
+            cha_listed = slice_by_idx(cha, i_ends, side='end')
+            cha_list_2.extend(cha_listed)
+        elif side == 'both':
+            cha_listed = slice_by_idx(cha, i_tuples, side='tuple') 
+            cha_list_2.extend(cha_listed)
 
     result = cha_list_2
     if strip == True:
