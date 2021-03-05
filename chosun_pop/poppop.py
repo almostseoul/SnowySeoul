@@ -269,15 +269,18 @@ def Chi2Fig(cha, complex=False, new_dict = False, replace_dict=dict()):
             if ch[-1] in dict_deci.keys():
                 if len(ch) == 1:
                     p = dict_deci[ch[-1]]
+                    deci_sum.append(p)
                 elif len(ch) == 2:
-                    p = dict_unit[ch[-2]]*dict_deci[ch[-1]]                    
+                    p = dict_unit[ch[-2]]*dict_deci[ch[-1]]
+                    deci_sum.append(p)
             else:
                 p = dict_unit[ch[-1]]
-            deci_sum.append(p)
+                deci_sum.append(p)
 
         result = sum(deci_sum)
 
     return result
+
 
 
 def ganji(year, kr=False):
