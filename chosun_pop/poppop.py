@@ -84,16 +84,18 @@ def slice_by_idx(cha, idx_list, side='front'):
     return cha_list
             
 
-    
-def slice_by_str(cha_list, by_list, side = 'front', strip = True, exhaustive=True, exhaustive_limit=1):
+   
+
+def slice_by_str(cha_list, by_list, stop_list = [], side = 'front', strip = True, exhaustive=True, exhaustive_limit=1):
     """
     Slice a list of strings by strings in a list. If they put in str, function will transfrom them into list automatically. Result form is in list, of course.
     If strip == True, all strings in a result list are applied .strip() function. If not, they are not. True is default here.
     If exhaustive == True, each string in by_list will slice strings in cha_list as much as they can.
     (however, strings in by_list have hierarchy. That is, if a character or character span sliced by former elements in by_list, it won't be sliced by lasts.)
     If exhaustive == False, slicing time for each string in by_list are limitated as musch as exhaustive_limit value, which has 1 default.
-
     side option can have 'front', 'end' or 'both'. This designates the slicing point, if at the front/end/both of the character.
+
+    stop_list option is added. Although a str in cha_list, if it is in stop_list or included in words of stop_list, it cannot slice.
     """
 
     if type(cha_list) == str:
@@ -105,24 +107,36 @@ def slice_by_str(cha_list, by_list, side = 'front', strip = True, exhaustive=Tru
     for cha in cha_list:
         i_tuples = []
         ii = []
+
+        #
+        i_stops = []
+        for stop in stop_list:
+            for i, a in enumerate(cha):
+                if cha[i:i+len(stop)] == stop:
+                    if i not in i_stops:
+                        i_stops.extend(list(range(i, i+len(stop))))
+        #
+
         for by in by_list:
             
             if exhaustive == True:
                 for i, a in enumerate(cha):
                     if cha[i:i+len(by)] == by:
                         if i not in ii: # by_list is hierarchical. That is, once sliced by former by in by_list, an index range cannot be sliced by other by.
-                            i_tuples.append((i, len(by)))
-                            ii.extend(list(range(i, i+len(by))))
+                            if i not in i_stops: # 
+                                i_tuples.append((i, len(by)))
+                                ii.extend(list(range(i, i+len(by))))
             else: # if exhaustive == False:
                 exh = 1                
                 for i, a in enumerate(cha):
                     if cha[i:i+len(by)] == by:
                         if i not in ii:
-                            i_tuples.append((i, len(by)))
-                            ii.extend(list(range(i, i+len(by))))
-                            exh += 1
-                            if exh > exhaustive_limit:
-                                break
+                            if i not in i_stops: #
+                                i_tuples.append((i, len(by)))
+                                ii.extend(list(range(i, i+len(by))))
+                                exh += 1
+                                if exh > exhaustive_limit:
+                                    break
 
         i_fronts = [it[0] for it in i_tuples]
         i_ends = [it[0]+it[1]-1 for it in i_tuples]
