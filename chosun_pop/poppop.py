@@ -270,7 +270,7 @@ def Chi2Fig(cha, complex=False, new_dict = False, replace_dict=dict()):
                 if len(ch) == 1:
                     p = dict_deci[ch[-1]]
                     deci_sum.append(p)
-                elif len(ch) == 2:
+                elif len(ch) >= 2:
                     p = dict_unit[ch[-2]]*dict_deci[ch[-1]]
                     deci_sum.append(p)
             else:
