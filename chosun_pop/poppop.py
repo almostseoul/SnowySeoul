@@ -4,6 +4,7 @@
 New*
 slice_by_idx
 slice_by_str
+slice_by_group
 *New
 
 Chi2Fig ... transfer Chinese fig into decimal fig.
@@ -144,7 +145,42 @@ def slice_by_str(cha_list, by_list, side = 'front', strip = True, exhaustive=Tru
     return result
  
 
+    
+def slice_by_group(cha_list, group_list):
+    """
+    Slice string or list of strings by group belongingness.
+    """
 
+    if type(cha_list) == str:
+        cha_list = [cha_list]
+
+    key_dict = dict()
+    for a in "".join(cha_list):
+        if a in group_list:
+            key_dict[a] = 'a'
+        else:
+            key_dict[a] = 'b'
+
+    cha_list_2 = []
+    for cha in cha_list:
+        i_tuples = []
+        ijs = []
+        for i, a in enumerate(cha):
+            if i not in ijs:
+                if key_dict[a] == 'a':
+                    for j in range(len(cha)-i):
+                        if key_dict[cha[i+j]] == 'b':
+                            i_tuples.append((i, j))
+                            ijs.extend(list(range(i, i+j)))
+                            break
+        cha = slice_by_idx(cha, i_tuples, side='tuple')
+        cha_list_2.extend(cha)
+
+    return cha_list_2    
+  
+
+    
+ 
 
 import random
 import string
