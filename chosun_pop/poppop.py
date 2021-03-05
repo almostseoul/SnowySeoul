@@ -1,11 +1,139 @@
 """
-sliceitby ... split strings while not omiting the split character.
+... split strings while not omiting the split character. -> This will be depricated.
+
+New*
+slice_by_idx
+slice_by_str
+*New
+
 Chi2Fig ... transfer Chinese fig into decimal fig.
 ganji ... get ganji(Sexagenary cycle) of a year.
 ganji_gap,
 years_of_ganji
 
 """
+
+def slice_by_idx(cha, idx_list, side='front'):
+    """
+    Slice a string by its index point.
+    side option can have 'front', 'end' or 'tuple'. 'front' or 'end' means where is the splicing point to the index.
+    If side == 'tuple', idx_list should be the list of tuples, which have couple value of (index, lenght).
+    """
+
+    if type(idx_list) == int:
+        idx_list = [idx_list]
+
+    if len(idx_list) == 0:
+        cha_list = [cha]
+
+    else:
+        if side == 'front':
+
+            if len(idx_list) == 1:
+                i = idx_list[0]
+                cha_list = [cha[:i], cha[i:]]
+            
+            else:
+                cha_list = []
+                for j, i in enumerate(idx_list):
+                    if j == 0:
+                        cha_list.append(cha[:i])
+                    elif j == len(idx_list)-1:
+                        cha_list.extend([cha[idx_list[j-1]:i], cha[i:]])
+                    else:
+                        cha_list.append(cha[idx_list[j-1]:i])
+
+        elif side == 'end':
+
+            if len(idx_list) == 1:
+                i = idx_list[0]
+                cha_list = [cha[:i+1], cha[i+1:]]
+            
+            else:
+                cha_list = []
+                for j, i in enumerate(idx_list):
+                    if j == 0:
+                        cha_list.append(cha[:i+1])
+                    elif j == len(idx_list)-1:
+                        cha_list.extend([cha[idx_list[j-1]+1:i+1], cha[i+1:]])
+                    else:
+                        cha_list.append(cha[idx_list[j-1]+1:i+1])
+
+        elif side == 'tuple': # 이 옵션은 (i, lenth) 튜플을 원소로 갖는 리스트 idx_list를 사용
+                              # tuple[0]은 시작 idx, tuple[1]은 그 길이 # 길이 오버랩은 없을 것이라 가정!
+            
+            if len(idx_list) == 1:
+                i, l = idx_list[0][0], idx_list[0][1]
+                cha_list = [cha[:i], cha[i:i+l], cha[i+l:]]
+
+            else:
+                cha_list = []
+                for j, idx_tuple in enumerate(idx_list):
+                    i, l = idx_tuple[0], idx_tuple[1]
+                    if j == 0:
+                        cha_list.extend([cha[:i], cha[i:i+l]])
+                    else:
+                        pi, pl = idx_list[j-1][0], idx_list[j-1][1]
+                        if j == len(idx_list)-1:
+                            cha_list.extend([cha[pi+pl:i], cha[i:i+l], cha[i+l:]])
+                        else:
+                            cha_list.extend([cha[pi+pl:i], cha[i:i+l]])
+
+    cha_list = [a for a in cha_list if a != ""]
+    return cha_list
+            
+
+
+def slice_by_str(cha_list, by_list, stop_list = [], strip = True, exhaustive=True, exhaustive_limit=1):
+    """
+    Slice a list of strings by strings in a list. If they put in str, function will transfrom them into list automatically. Result form is in list, of course.
+    If strip == True, all strings in a result list are applied .strip() function. If not, they are not. True is default here.
+    If exhaustive == True, each string in by_list will slice strings in cha_list as much as they can.
+    (however, strings in by_list have hierarchy. That is, if a character or character span sliced by former elements in by_list, it won't be sliced by lasts.)
+    If exhaustive == False, slicing time for each string in by_list are limitated as musch as exhaustive_limit value, which has 1 default.
+    """
+
+    if type(cha_list) == str:
+        cha_list = [cha_list]
+    if type(by_list) == str:
+        by_list = [by_list]
+
+    cha_list_2 = []
+    for cha in cha_list:
+        i_tuples = []
+        ii = []
+        for by in by_list:
+            
+            if exhaustive == True:
+                for i, a in enumerate(cha):
+                    if cha[i:i+len(by)] == by:
+                        if i not in ii: # by_list is hierarchical. That is, once sliced by former by in by_list, an index range cannot be sliced by other by.
+                            i_tuples.append((i, len(by)))
+                            ii.extend(list(range(i, i+len(by))))
+            else: # if exhaustive == False:
+                exh = 1                
+                for i, a in enumerate(cha):
+                    if cha[i:i+len(by)] == by:
+                        if i not in ii:
+                            i_tuples.append((i, len(by)))
+                            ii.extend(list(range(i, i+len(by))))
+                            exh += 1
+                            if exh > exhaustive_limit:
+                                break
+                    
+        cha_listed = slice_by_idx(cha, i_tuples, side='tuple') # use the slice_by_idx function defined before.
+        cha_list_2.extend(cha_listed)
+
+    result = cha_list_2
+    if strip == True:
+        result = [r.strip() for r in result]
+    else:
+        pass
+
+    return result
+ 
+
+
 
 import random
 import string
@@ -73,7 +201,7 @@ def Chi2Fig(cha, complex=False, new_dict = False, replace_dict=dict()):
         cha = cha.replace('空', '')
         # (2)
         for deci in dict_deci.keys():
-            cha = sliceitby(cha, deci, side='end')
+            cha = slice_by_str(cha, deci, side='end')
 
         deci_sum = []
         for ch in cha: # now cha is a list
