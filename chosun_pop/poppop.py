@@ -134,7 +134,7 @@ def ganji_gap(a, b): # a가 b보다 최신 년도 간지라고 가정
     
     
     
- def years_of_ganji(ganji):
+def years_of_ganji(ganji):
     """
     어떤 간지에 해당하는 년도의 리스트업 (16~21세기 내에서)
     """
